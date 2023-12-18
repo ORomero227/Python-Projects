@@ -19,7 +19,7 @@ screen.onkey(fun=player.move, key="Up")
 game_on = True
 while game_on:
     screen.update()
-    time.sleep(1.0)
+    time.sleep(0.1)
 
     if player.ycor() > 270:
         player.start_position()

@@ -8,7 +8,7 @@ class CarGenerator:
         self.generate_first_cars()
 
     def generate_first_cars(self):
-        for _ in range(15):
+        for _ in range(0, 10):
             self.generate_car()
 
     def generate_car(self):
