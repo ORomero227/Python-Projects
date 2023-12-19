@@ -1,0 +1,1 @@
+### Explore projects in this folder that focus on graphical elements. From simple graphics to more complex visual applications and games.

@@ -1,0 +1,1 @@
+### This folder contains projects developed to run in a console environment. You'll find text-based games and applications here.
