@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from random import shuffle, choice, randint
+import json
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -26,29 +27,57 @@ def generate_password():
     # Create the password
     password = "".join(random_choices)
 
+    if len(password_input.get()) != 0:
+        password_input.delete(0, END)
+
     password_input.insert(END, password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save():
-    website_name = website_input.get()
+    website = website_input.get()
     email = email_input.get()
     password = password_input.get()
+    new_data = {website: {
+        "email": email,
+        "password": password
+    }}
 
-    if len(website_name) == 0 or len(password) == 0:
+    if len(website) == 0 or len(password) == 0:
         messagebox.showwarning(title="Missing fields", message="Please don't leave any fields empty!")
     else:
-        is_ok = messagebox.askokcancel(title=website_name, message=f"These are the details entered: \n\nEmail:{email} "
-                                                                   f"\nPassword:{password} \n\nIs it ok to save?")
-        if is_ok:
+        try:
+            with open("data.json", "r") as data_file:
+                data = json.load(data_file)
+        except FileNotFoundError:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            # Update old data with new data
+            data.update(new_data)
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
+        finally:
+            website_input.delete(0, END)
+            password_input.delete(0, END)
 
-            messagebox.showinfo(title="Confirmation", message="Password Saved!")
 
-            with open("data.txt", "a") as data:
-                data.write(f"{website_name} | {email} | {password}\n")
-                website_input.delete(0, END)
-                password_input.delete(0, END)
-                website_input.focus()
+# ------------------------ FIND PASSWORD ------------------------------------ #
+def find_password():
+    website = website_input.get()
+
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showwarning(title="Not Found", message="No Data File Found")
+    else:
+        if website in data:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website, message=f"Email: {email} \nPassword: {password}")
+        else:
+            messagebox.showwarning(title="Password Manager", message=f"No details for {website} exists.")
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -73,9 +102,9 @@ password_lbl = Label(text="Password:")
 password_lbl.grid(row=3, column=0)
 
 # --------- Entries ---------------------
-website_input = Entry(width=53)
+website_input = Entry(width=34)
 website_input.focus()
-website_input.grid(row=1, column=1, columnspan=2)
+website_input.grid(row=1, column=1)
 
 email_input = Entry(width=53)
 email_input.insert(END, "example@gmail.com")
@@ -91,5 +120,7 @@ generate_password_btn.grid(row=3, column=2)
 add_btn = Button(text="Add", width=45, command=save)
 add_btn.grid(row=4, column=1, columnspan=2)
 
+search_btn = Button(text="Search", width=15, command=find_password)
+search_btn.grid(row=1, column=2)
 
 window.mainloop()
