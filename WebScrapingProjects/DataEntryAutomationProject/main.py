@@ -50,8 +50,7 @@ options.add_experimental_option(name="detach", value=True)
 driver = webdriver.Edge(options=options)
 driver.get(url=FORM_URL)
 
-counter = 0
-
+# Fill the form
 for n in range(len(listings_address)):
     address_input = driver.find_element(By.XPATH, "//*[@id='mG61Hd']/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]"
                                                   "/div/div[1]/input")
@@ -63,17 +62,11 @@ for n in range(len(listings_address)):
 
     time.sleep(1)
 
-    # address_input.send_keys(Keys.END)
     address_input.send_keys(listings_address[n])
-
-    # price_input.send_keys(Keys.END)
     price_input.send_keys(listings_prices[n])
-
-    # link_input.send_keys(Keys.END)
     link_input.send_keys(listings_links[n])
 
     submit_btn.click()
-
     driver.get(FORM_URL)
 
 driver.quit()
